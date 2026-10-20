@@ -1,114 +1,117 @@
+
 erDiagram
-    AERONAVE {
-        int id_aeronave PK
-        string matricula UK
-        string modelo
-        int capacidade
-        string estado
-        decimal horas_voo
+    AIRCRAFT {
+        int aircraft_id PK
+        string registration UK
+        string model
+        int capacity
+        string status
+        decimal flight_hours
     }
 
-    VOO {
-        int id_voo PK
-        string numero_voo
-        string origem
-        string destino
-        datetime data_hora_partida
-        datetime data_hora_chegada
-        int capacidade_voo
-        datetime checkin_abertura
-        datetime checkin_encerramento
-        string estado
-        int id_aeronave FK
+    FLIGHT {
+        int flight_id PK
+        string flight_number
+        string origin
+        string destination
+        datetime scheduled_departure
+        datetime scheduled_arrival
+        int flight_capacity
+        datetime checkin_opening
+        datetime checkin_closing
+        string status
+        int aircraft_id FK
     }
 
-    PASSAGEIRO {
-        int id_passageiro PK
-        string nome
-        string documento_identificacao UK
-        date data_nascimento
-        string nacionalidade
-        string contacto
+    PASSENGER {
+        int passenger_id PK
+        string full_name
+        string identification_document UK
+        date date_of_birth
+        string nationality
+        string contact
     }
 
-    RESERVA {
-        int id_reserva PK
-        datetime data_reserva
-        string estado
-        int id_passageiro FK
-        int id_voo FK
+    BOOKING {
+        int booking_id PK
+        datetime booking_date
+        string status
+        int passenger_id FK
+        int flight_id FK
     }
 
     CHECK_IN {
-        int id_checkin PK
-        datetime data_hora_checkin
-        string estado
-        int id_passageiro FK
-        int id_voo FK
+        int checkin_id PK
+        datetime checkin_datetime
+        string status
+        int passenger_id FK
+        int flight_id FK
     }
 
-    PISTA {
-        int id_pista PK
-        string codigo UK
-        int comprimento
-        string estado
+    RUNWAY {
+        int runway_id PK
+        string code UK
+        int length
+        string status
     }
 
-    OPERACAO_PISTA {
-        int id_operacao PK
-        int id_pista FK
-        int id_voo FK
-        datetime data_hora_inicio
-        datetime data_hora_fim
-        string tipo_operacao
-        string estado
+    RUNWAY_OPERATION {
+        int operation_id PK
+        int runway_id FK
+        int flight_id FK
+        datetime start_datetime
+        datetime end_datetime
+        string operation_type
+        string status
     }
 
-    PORTAO {
-        int id_portao PK
-        string codigo UK
+    GATE {
+        int gate_id PK
+        string code UK
         string terminal
-        string estado
+        string status
     }
 
-    ALOCACAO_PORTAO {
-        int id_alocacao PK
-        int id_voo FK
-        int id_portao FK
-        datetime data_hora_inicio
-        datetime data_hora_fim
-        string estado
+    GATE_ALLOCATION {
+        int allocation_id PK
+        int flight_id FK
+        int gate_id FK
+        datetime start_datetime
+        datetime end_datetime
+        string status
     }
 
-    MANUTENCAO {
-        int id_manutencao PK
-        int id_aeronave FK
-        string tipo
-        datetime data_inicio
-        datetime data_fim
-        string estado
-        string descricao
+    MAINTENANCE {
+        int maintenance_id PK
+        int aircraft_id FK
+        string maintenance_type
+        datetime start_datetime
+        datetime end_datetime
+        string status
+        string description
     }
 
-    REPROGRAMACAO {
-        int id_reprogramacao PK
-        int id_voo FK
-        datetime data_reprogramacao
-        string motivo
-        datetime partida_anterior
-        datetime chegada_anterior
-        datetime nova_partida
-        datetime nova_chegada
+    RESCHEDULING {
+        int rescheduling_id PK
+        int flight_id FK
+        datetime rescheduling_datetime
+        string reason
+        datetime previous_departure
+        datetime previous_arrival
+        datetime new_departure
+        datetime new_arrival
     }
 
-    AERONAVE ||--o{ VOO : "e atribuida a"
-    AERONAVE ||--o{ MANUTENCAO : "possui"
-    RESERVA }o--|| PASSAGEIRO : "efectua"
-    VOO ||--o{ RESERVA : "recebe"
-    CHECK_IN }o--|| PASSAGEIRO : "realiza"
-    VOO ||--o{ CHECK_IN : "regista"
-    VOO ||--o{ ALOCACAO_PORTAO : "possui"
-    ALOCACAO_PORTAO }o--|| PORTAO : "recebe"
-    VOO ||--o{ OPERACAO_PISTA : "inclui"
-    OPERACAO_PISTA }o--|| PISTA : "e utilizada em"
-    VOO ||--o{ REPROGRAMACAO : "possui historico"
+    AIRCRAFT ||--o{ FLIGHT : "is assigned to"
+    AIRCRAFT ||--o{ MAINTENANCE : "has"
+    BOOKING }o--|| PASSENGER : "makes"
+    FLIGHT ||--o{ BOOKING : "receives"
+    CHECK_IN }o--|| PASSENGER : "completes"
+    FLIGHT ||--o{ CHECK_IN : "records"
+    FLIGHT ||--o{ GATE_ALLOCATION : "has"
+    GATE_ALLOCATION }o--|| GATE : "is assigned through"
+    FLIGHT ||--o{ RUNWAY_OPERATION : "includes"
+    RUNWAY_OPERATION }o--|| RUNWAY : "is used in"
+    FLIGHT ||--o{ RESCHEDULING : "has history"
+
+
