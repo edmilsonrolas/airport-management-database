@@ -1,5 +1,14 @@
 
 erDiagram
+    AIRPORT {
+        int airport_id PK
+        string iata_code UK
+        string icao_code UK
+        string name
+        string city
+        string country
+    }
+
     AIRCRAFT {
         int aircraft_id PK
         string registration UK
@@ -12,15 +21,23 @@ erDiagram
     FLIGHT {
         int flight_id PK
         string flight_number
-        string origin
-        string destination
+        int origin_airport_id FK
+        int destination_airport_id FK
         datetime scheduled_departure
         datetime scheduled_arrival
         int flight_capacity
         datetime checkin_opening
         datetime checkin_closing
         string status
+    }
+
+    AIRCRAFT_ASSIGNMENT {
+        int assignment_id PK
+        int flight_id FK
         int aircraft_id FK
+        datetime start_datetime
+        datetime end_datetime
+        string status
     }
 
     PASSENGER {
@@ -50,7 +67,8 @@ erDiagram
 
     RUNWAY {
         int runway_id PK
-        string code UK
+        int airport_id FK
+        string code
         int length
         string status
     }
@@ -67,7 +85,8 @@ erDiagram
 
     GATE {
         int gate_id PK
-        string code UK
+        int airport_id FK
+        string code
         string terminal
         string status
     }
@@ -76,6 +95,24 @@ erDiagram
         int allocation_id PK
         int flight_id FK
         int gate_id FK
+        string allocation_type
+        datetime start_datetime
+        datetime end_datetime
+        string status
+    }
+
+    AIRCRAFT_STAND {
+        int stand_id PK
+        int airport_id FK
+        string code
+        string stand_type
+        string status
+    }
+
+    STAND_ALLOCATION {
+        int stand_allocation_id PK
+        int flight_id FK
+        int stand_id FK
         datetime start_datetime
         datetime end_datetime
         string status
@@ -102,16 +139,43 @@ erDiagram
         datetime new_arrival
     }
 
-    AIRCRAFT ||--o{ FLIGHT : "is assigned to"
-    AIRCRAFT ||--o{ MAINTENANCE : "has"
-    BOOKING }o--|| PASSENGER : "makes"
-    FLIGHT ||--o{ BOOKING : "receives"
-    CHECK_IN }o--|| PASSENGER : "completes"
-    FLIGHT ||--o{ CHECK_IN : "records"
-    FLIGHT ||--o{ GATE_ALLOCATION : "has"
-    GATE_ALLOCATION }o--|| GATE : "is assigned through"
-    FLIGHT ||--o{ RUNWAY_OPERATION : "includes"
-    RUNWAY_OPERATION }o--|| RUNWAY : "is used in"
+    RESCHEDULING_RESOURCE_CHANGE {
+        int change_id PK
+        int rescheduling_id FK
+        string resource_type
+        int previous_aircraft_id FK
+        int new_aircraft_id FK
+        int previous_gate_id FK
+        int new_gate_id FK
+        int previous_runway_id FK
+        int new_runway_id FK
+        int previous_stand_id FK
+        int new_stand_id FK
+    }
+
+    AIRPORT ||--o{ FLIGHT : "is origin for"
+    AIRPORT ||--o{ FLIGHT : "is destination for"
+    AIRPORT ||--o{ RUNWAY : "has"
+    AIRPORT ||--o{ GATE : "has"
+    AIRPORT ||--o{ AIRCRAFT_STAND : "has"
+
+    FLIGHT ||--o{ AIRCRAFT_ASSIGNMENT : "has assignment history"
+    AIRCRAFT ||--o{ MAINTENANCE : "undergoes"
+    AIRCRAFT ||--o{ AIRCRAFT_ASSIGNMENT : "is assigned through"
+
     FLIGHT ||--o{ RESCHEDULING : "has history"
+    RESCHEDULING ||--o{ RESCHEDULING_RESOURCE_CHANGE : "records"
 
+    PASSENGER ||--o{ BOOKING : "makes"
+    FLIGHT ||--o{ BOOKING : "receives"
+    PASSENGER ||--o{ CHECK_IN : "completes"
+    FLIGHT ||--o{ CHECK_IN : "records"
 
+    GATE_ALLOCATION }o--|| FLIGHT : "has"
+    GATE ||--o{ GATE_ALLOCATION : "is allocated through"
+    RUNWAY_OPERATION }o--|| FLIGHT : "includes"
+    RUNWAY ||--o{ RUNWAY_OPERATION : "is used in"
+    STAND_ALLOCATION }o--|| FLIGHT : "has"
+    AIRCRAFT_STAND ||--o{ STAND_ALLOCATION : "is allocated through"
+
+    

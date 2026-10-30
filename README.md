@@ -4,9 +4,11 @@ Relational database design and Oracle PL/SQL implementation for airport operatio
 ## Features
 
 - Flight scheduling and rescheduling
-- Aircraft management and maintenance
-- Runway and gate allocation
+- Airport and aircraft management
+- Aircraft assignment and maintenance tracking
+- Gate, runway and aircraft stand allocation
 - Passenger reservations and check-in
+- Resource change history and conflict prevention
 - Database integrity and operational constraints
 
 ## Technologies
