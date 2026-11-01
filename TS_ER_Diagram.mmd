@@ -57,12 +57,20 @@ erDiagram
         int flight_id FK
     }
 
+    BOOKING_STATUS_HISTORY {
+        int history_id PK
+        int booking_id FK
+        string previous_status
+        string new_status
+        datetime changed_at
+        string reason
+    }
+
     CHECK_IN {
         int checkin_id PK
+        int booking_id FK
         datetime checkin_datetime
         string status
-        int passenger_id FK
-        int flight_id FK
     }
 
     RUNWAY {
@@ -168,14 +176,22 @@ erDiagram
 
     PASSENGER ||--o{ BOOKING : "makes"
     FLIGHT ||--o{ BOOKING : "receives"
-    PASSENGER ||--o{ CHECK_IN : "completes"
-    FLIGHT ||--o{ CHECK_IN : "records"
+
+    BOOKING ||--o{ BOOKING_STATUS_HISTORY : "has status history"
+    BOOKING ||--o| CHECK_IN : "may have"
 
     GATE_ALLOCATION }o--|| FLIGHT : "has"
     GATE ||--o{ GATE_ALLOCATION : "is allocated through"
+
     RUNWAY_OPERATION }o--|| FLIGHT : "includes"
     RUNWAY ||--o{ RUNWAY_OPERATION : "is used in"
+    
     STAND_ALLOCATION }o--|| FLIGHT : "has"
     AIRCRAFT_STAND ||--o{ STAND_ALLOCATION : "is allocated through"
 
     
+%% IATA (International Air Transport Association)
+%% IATA codes are typically three-letter codes used for ticketing and baggage handling
+
+%% ICAO (International Civil Aviation Organization) unique identifiers for airports.
+%% ICAO codes are four-letter codes used for air traffic control and airline operations.
